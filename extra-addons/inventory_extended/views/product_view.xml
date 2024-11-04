@@ -1,0 +1,40 @@
+<odoo>
+  <!-- Form Extend -->
+  <record id="view_form_product_extend" model="ir.ui.view">
+    <field name="name">Product: add Unique ID field</field>
+    <field name="model">product.template</field>
+    <field name="inherit_id" ref="product.product_template_only_form_view" />
+    <field name="arch" type="xml">
+      <xpath
+        expr='//form/sheet/notebook/page[@name="general_information"]/group/group[@name="group_standard_price"]'
+        position="inside">
+        <field name="unique_id" />
+      </xpath>
+    </field>
+  </record>
+  <!-- Tree Extend -->
+  <record id="view_tree_product_extend" model="ir.ui.view">
+    <field name="name">Product: add Unique ID field</field>
+    <field name="model">product.template</field>
+    <field name="inherit_id" ref="product.product_template_tree_view" />
+    <field name="arch" type="xml">
+      <field name="default_code" position="after">
+        <field name="unique_id" />
+      </field>
+    </field>
+  </record>
+  <!-- Search Extend -->
+  <record id="view_search_product_extend" model="ir.ui.view">
+    <field name="name">Product Filters</field>
+    <field name="model">product.template</field>
+    <field name="inherit_id" ref="stock.product_template_search_form_view_stock" />
+    <field name="arch" type="xml">
+      <field name="warehouse_id" position="after">
+        <field name="unique_id" />
+      </field>
+      <field name="name" position="before">
+        <field name="all_fields" />
+      </field>
+    </field>
+  </record>
+</odoo>

@@ -1,0 +1,113 @@
+<odoo>
+	<!-- view for timekeeping.table -->
+	<!-- form view -->
+	<record id="view_form_timekeeping" model="ir.ui.view">
+		<field name="name">Timekeeping Form</field>
+		<field name="model">timekeeping.table</field>
+		<field name="arch" type="xml">
+			<form>
+				<sheet>
+					<group name="group_top">
+						<group name="group_left">
+							<field name="order_id" options="{'no_create': True}"
+								domain="[('state', '=', 'sale')]" required="True" />
+							<field name="order_line_id" options="{'no_create': True}"
+								domain="[('order_id', '=', order_id)]" required="True" />
+							<field name="quantity" />
+							<field name="reason" options="{'no_create': True}" />
+						</group>
+						<group name="group_right">
+							<group name="group_left">
+								<field name="date" />
+								<field name="company_id" options="{'no_create': True}"
+									domain="[('parent_id', '!=', False)]" readonly="False" />
+								<field name="employee_id" options="{'no_create': True}"
+									domain="[('company_id', '=', company_id)]" />
+							</group>
+							<group name="group_right">
+								<field name="image_1920" widget="image" />
+							</group>
+						</group>
+					</group>
+					<group string="Ghi chú">
+						<field colspan="2" name="note" nolabel="1"
+							placeholder="This note is only for internal purposes." />
+					</group>
+				</sheet>
+				<!-- mail mixin fields -->
+				<div class="oe_chatter">
+					<field name="message_follower_ids" widget="mail_followers" />
+					<field name="activity_ids" widget="mail_activity" />
+					<field name="message_ids" widget="mail_thread" />
+				</div>
+			</form>
+		</field>
+	</record>
+	<!-- tree view -->
+	<record id="view_tree_timekeeping" model="ir.ui.view">
+		<field name="name">Timekeeping List</field>
+		<field name="model">timekeeping.table</field>
+		<field name="arch" type="xml">
+			<tree>
+				<field name="date" width="80" />
+				<field name="company_id" width="80" />
+				<field name="employee_id" width="80" />
+				<field name="order_id" width="80" />
+				<field name="order_line_id" width="80" />
+				<field name="quantity" width="80" />
+				<field name="list_price" width="80" />
+				<field name="pay" widget="monetary" width="80" sum="Total Pay"
+					options="{'currency_field': 'currency_id'}" />
+				<!-- must put it here to show the sympol -->
+				<field name="currency_id" invisible="1" />
+			</tree>
+		</field>
+	</record>
+	<!-- view for timekeeping.reason -->
+	<record id="view_list_reason" model="ir.ui.view">
+		<field name="name">Reason List</field>
+		<field name="model">timekeeping.reason</field>
+		<field name="arch" type="xml">
+			<tree editable="bottom">
+				<field name="reason" string="Lý do" />
+			</tree>
+		</field>
+	</record>
+	<!-- search view -->
+	<record id="view_search_timekeeping" model="ir.ui.view">
+		<field name="name">Timekeeping Filters</field>
+		<field name="model">timekeeping.table</field>
+		<field name="arch" type="xml">
+			<search>
+				<field name="employee_id" />
+				<field name="order_line_id" />
+				<!-- Filters -->
+				<filter string="Hôm nay" name="filter_today"
+					domain="[('date', '=', context_today().strftime('%Y-%m-%d'))]" />
+				<filter string="Tuần này" name="current_week"
+					domain="[
+						('date', '&lt;=', ((context_today()+relativedelta(weeks=0, weekday=-1)).strftime('%Y-%m-%d'))),   
+						('date', '&gt;=', ((context_today()-relativedelta(weeks=1, weekday=0)).strftime('%Y-%m-%d')))
+					]" />
+				<filter string="Tháng này" name="current_month"
+					domain="[
+						('date','&lt;',(context_today()+relativedelta(months=1)).strftime('%Y-%m-01')),
+						('date','&gt;=',time.strftime('%Y-%m-01'))
+					]" />
+				<filter string="Quý này" name="current_quarter"
+					domain="[('quarter', '=', (context_today().month - 1) // 3 + 1)]" />
+				<!-- <filter string="Năm này" name="current_year" domain="[('year', '=', context_today().year]" /> -->
+				<!-- GroupBy -->
+				<group expand="1" string="Group By">
+					<filter string="Xưởng" name="company" context="{'group_by':'company_id'}" />
+					<filter string="Nhân viên" name="employee_id" context="{'group_by':'employee_id'}" />
+					<separator />
+					<filter string="Đơn hàng" name="order" context="{'group_by':'order_id'}" />
+					<filter string="Mã hàng" name="order_line_id" context="{'group_by':'order_line_id'}" />
+					<separator />
+					<filter string="Thời gian" name="date" context="{'group_by':'date'}" />
+				</group>
+			</search>
+		</field>
+	</record>
+</odoo>
